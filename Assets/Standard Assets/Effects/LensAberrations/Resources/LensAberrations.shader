@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/LensAberrations"
 {
     Properties
@@ -17,7 +19,7 @@ Shader "Hidden/LensAberrations"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
-
+			half4 _MainTex_ST;
             half4 _ChromaticAberration;
 
             half4 chromaticAberration(half2 uv)
@@ -129,8 +131,8 @@ Shader "Hidden/LensAberrations"
                 v2f vert_blur_prepass(appdata_img v)
                 {
                     v2f o;
-                    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-                    o.uv = v.texcoord.xy;
+                    o.pos = UnityObjectToClipPos(v.vertex);
+					o.uv = UnityStereoScreenSpaceUVAdjust(v.texcoord.xy, _MainTex_ST);
 
                     #if UNITY_UV_STARTS_AT_TOP
                     if (_MainTex_TexelSize.y < 0)
@@ -178,6 +180,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return chromaticAberration(i.uv);
                 }
             ENDCG
@@ -193,6 +196,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+
                     half2 uv = distort(i.uv);
                     return tex2D(_MainTex, uv);
                 }
@@ -211,6 +215,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half4 color = tex2D(_MainTex, i.uv);
                     return vignette(color, i.uv);
                 }
@@ -227,6 +232,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 uv = distort(i.uv);
                     return chromaticAberration(uv);
                 }
@@ -245,6 +251,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return vignette(chromaticAberration(i.uv), i.uv);
                 }
             ENDCG
@@ -263,6 +270,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 uv = distort(i.uv);
                     return vignette(tex2D(_MainTex, uv), i.uv);
                 }
@@ -282,6 +290,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 uv = distort(i.uv);
                     half4 chroma = chromaticAberration(uv);
                     return vignette(chroma, i.uv);

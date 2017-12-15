@@ -1,3 +1,7 @@
+// Upgrade NOTE: replaced 'UNITY_INSTANCE_ID' with 'UNITY_VERTEX_INPUT_INSTANCE_ID'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Fast Approximate Anti-aliasing"
 {
     Properties
@@ -28,12 +32,14 @@ Shader "Hidden/Fast Approximate Anti-aliasing"
         #define FXAA_GREEN_AS_LUMA 1
 
         #pragma target 3.0
+		#include "UnityCG.cginc"
         #include "FXAA3.cginc"
 
         float4 _MainTex_TexelSize;
 
         float3 _QualitySettings;
         float4 _ConsoleSettings;
+		half4 _MainTex_ST;
 
         struct Input
         {
@@ -50,9 +56,8 @@ Shader "Hidden/Fast Approximate Anti-aliasing"
         Varying vertex(Input input)
         {
             Varying output;
-
-            output.position = mul(UNITY_MATRIX_MVP, input.position);
-            output.uv = input.uv;
+            output.position = UnityObjectToClipPos(input.position);
+			output.uv = UnityStereoScreenSpaceUVAdjust(input.uv, _MainTex_ST);
 
             return output;
         }

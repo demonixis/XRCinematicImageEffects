@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Subpixel Morphological Anti-aliasing"
 {
     Properties
@@ -11,6 +13,7 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
         #pragma target 3.0
         #pragma glsl
         #pragma exclude_renderers flash
+		#include "UnityCG.cginc"
 
         sampler2D _MainTex;
         sampler2D _BlendTex;
@@ -29,6 +32,7 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
 
         float4x4 _ReprojectionMatrix;
         float4 _SubsampleIndices;
+		half4 _MainTex_ST;
 
         #define SMAA_RT_METRICS _Metrics
         #define SMAA_THRESHOLD _Params1.x
@@ -78,8 +82,8 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
         fInput_edge vert_edge(vInput i)
         {
             fInput_edge o;
-            o.pos = mul(UNITY_MATRIX_MVP, i.pos);
-            o.uv = i.uv;
+            o.pos = UnityObjectToClipPos(i.pos);
+			o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
 
             #if UNITY_UV_STARTS_AT_TOP
             if (_MainTex_TexelSize.y < 0)
@@ -266,8 +270,8 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                 fInput vert(vInput i)
                 {
                     fInput o;
-                    o.pos = mul(UNITY_MATRIX_MVP, i.pos);
-                    o.uv = i.uv;
+                    o.pos = UnityObjectToClipPos(i.pos);
+					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     o.pixcoord = o.uv * SMAA_RT_METRICS.zw;
 
                     // We will use these offsets for the searches later on (see @PSEUDO_GATHER4):
@@ -321,8 +325,8 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                 fInput vert(vInput i)
                 {
                     fInput o;
-                    o.pos = mul(UNITY_MATRIX_MVP, i.pos);
-                    o.uv = i.uv;
+                    o.pos = UnityObjectToClipPos(i.pos);
+					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     o.offset = mad(SMAA_RT_METRICS.xyxy, float4(1.0, 0.0, 0.0, 1.0), o.uv.xyxy);
                     return o;
                 }
@@ -364,8 +368,8 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                 fInput vert(vInput i)
                 {
                     fInput o;
-                    o.pos = mul(UNITY_MATRIX_MVP, i.pos);
-                    o.uv = i.uv;
+                    o.pos = UnityObjectToClipPos(i.pos);
+					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return o;
                 }
 
