@@ -1,4 +1,4 @@
-# XRCinematicImageEffects
+# XR Cinematic Image Effects
 This is an updated fork of the [Unity's Cinematic Image Effects](https://bitbucket.org/Unity-Technologies/cinematic-image-effects) for Unity 2017.3+ with Single Pass Stereo Rendering. Single Pass Instanced is planned for later. Because some effects are hard to convert, this repository contains only working effects.
 
 ## Compatibility
@@ -6,7 +6,7 @@ This is an updated fork of the [Unity's Cinematic Image Effects](https://bitbuck
 |--------|--------------------|-----------------------|
 | FXAA | Yes | No |
 | SMAA | Yes | No |
-| Vignette | Yes but the vignette center is bad | No |
+| Vignette | Yes but the center is bad | No |
 | Chromatic Aberation | Yes | No |
 | Heigh Fog | Yes | No |
 
