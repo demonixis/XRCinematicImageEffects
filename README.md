@@ -1,6 +1,8 @@
 # XR Cinematic Image Effects
 This is an updated fork of the [Unity's Cinematic Image Effects](https://bitbucket.org/Unity-Technologies/cinematic-image-effects) for Unity 2017.3+ with Single Pass Stereo Rendering. Single Pass Instanced is planned for later. Because some effects are hard to convert, this repository contains only working effects.
 
+![Preview](/images/preview.png)
+
 # Compatibility
 | Effect | Note |Single Pass Stereo | Single Pass Instanced |
 |--------|------|-------------------|-----------------------|
