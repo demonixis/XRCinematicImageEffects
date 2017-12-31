@@ -70,16 +70,17 @@ Shader "Hidden/LensAberrations"
                 #define _Smoothness     _VignetteSettings.y
                 #define _Roundness      _VignetteSettings.z
 
+                half2 center = UnityStereoTransformScreenSpaceTex(_VignetteCenter);
                 half vfactor = 1.0;
 
                 #if VIGNETTE_CLASSIC
 
-                    half2 d = (uv - _VignetteCenter) * _Intensity;
+                    half2 d = (uv - center) * _Intensity;
                     vfactor = pow(saturate(1.0 - dot(d, d)), _Smoothness);
 
                 #else
 
-                    half2 d = abs(uv - _VignetteCenter) * _Intensity;
+                    half2 d = abs(uv - center) * _Intensity;
                     d = pow(d, _Roundness);
 
                 #endif
@@ -180,8 +181,8 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    return chromaticAberration(i.uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    return chromaticAberration(uv);
                 }
             ENDCG
         }
@@ -196,9 +197,9 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-
-                    half2 uv = distort(i.uv);
-                    return tex2D(_MainTex, uv);
+                    half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    half2 dUV = distort(uv);
+                    return tex2D(_MainTex, dUV);
                 }
             ENDCG
         }
@@ -215,9 +216,9 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    half4 color = tex2D(_MainTex, i.uv);
-                    return vignette(color, i.uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    half4 color = tex2D(_MainTex, uv);
+                    return vignette(color, uv);
                 }
             ENDCG
         }
@@ -232,9 +233,9 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    half2 uv = distort(i.uv);
-                    return chromaticAberration(uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    half2 dUV = distort(uv);
+                    return chromaticAberration(dUV);
                 }
             ENDCG
         }
@@ -251,8 +252,8 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    return vignette(chromaticAberration(i.uv), i.uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    return vignette(chromaticAberration(uv), uv);
                 }
             ENDCG
         }
@@ -270,9 +271,9 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    half2 uv = distort(i.uv);
-                    return vignette(tex2D(_MainTex, uv), i.uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    half2 dUV = distort(uv);
+                    return vignette(tex2D(_MainTex, dUV), uv);
                 }
             ENDCG
         }
@@ -290,10 +291,10 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
-					i.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    half2 uv = distort(i.uv);
-                    half4 chroma = chromaticAberration(uv);
-                    return vignette(chroma, i.uv);
+					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
+                    half2 dUV = distort(uv);
+                    half4 chroma = chromaticAberration(dUV);
+                    return vignette(chroma, uv);
                 }
             ENDCG
         }
