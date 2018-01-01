@@ -769,7 +769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 864fd48948e5aa14b8f2bd7a5bcfb845, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AntiAliasing: {fileID: 1474920060}
+  m_AntiAliasing: {fileID: 0}
   m_DebugText: {fileID: 1388657286}
 --- !u!1 &1462046607
 GameObject:
@@ -819,9 +819,6 @@ GameObject:
   - component: {fileID: 1474920059}
   - component: {fileID: 1474920058}
   - component: {fileID: 1474920060}
-  - component: {fileID: 1474920063}
-  - component: {fileID: 1474920064}
-  - component: {fileID: 1474920065}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -879,15 +876,15 @@ MonoBehaviour:
   m_FXAA:
     preset:
       qualitySettings:
-        subpixelAliasingRemovalAmount: 1
-        edgeDetectionThreshold: 0.063
-        minimumRequiredLuminance: 0.0312
+        subpixelAliasingRemovalAmount: 0.75
+        edgeDetectionThreshold: 0.166
+        minimumRequiredLuminance: 0.0833
       consoleSettings:
         subpixelSpreadAmount: 0.5
-        edgeSharpnessAmount: 2
+        edgeSharpnessAmount: 8
         edgeDetectionThreshold: 0.125
-        minimumRequiredLuminance: 0.04
-  m_Method: 0
+        minimumRequiredLuminance: 0.05
+  m_Method: 1
 --- !u!20 &1474920061
 Camera:
   m_ObjectHideFlags: 0
@@ -937,167 +934,6 @@ Transform:
   m_Father: {fileID: 369126102}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1474920063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1474920057}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94b26c3ab9b73b74ca79b3b89e294dc4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  distanceFog:
-    enabled: 1
-    fogSkybox: 1
-    endDistance: 13.59
-    colorSelectionType: 1
-  heightFog:
-    enabled: 1
-    fogSkybox: 1
-    baseHeight: 0
-    baseDensity: 0.2
-    densityFalloff: 0.5
-    colorSelectionType: 1
-  distanceColorSource:
-    gradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    colorRamp: {fileID: 0}
-  heightColorSource:
-    gradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 0}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    colorRamp: {fileID: 0}
-  m_DistanceColorTexture: {fileID: 0}
-  m_HeightColorTexture: {fileID: 0}
-  m_distanceFogIntensityTexture: {fileID: 0}
-  m_Shader: {fileID: 4800000, guid: 515064f13b83c834b90cf548f9d426ff, type: 3}
---- !u!114 &1474920064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1474920057}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff5335a7357baa3489a469d0ca0f40f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  distortion:
-    enabled: 0
-    amount: 0
-    centerX: 0
-    centerY: 0
-    amountX: 1
-    amountY: 1
-    scale: 1
-  vignette:
-    enabled: 0
-    color: {r: 0, g: 0, b: 0, a: 1}
-    center: {x: 0.5, y: 0.5}
-    intensity: 3
-    smoothness: 0.8
-    roundness: 1
-    blur: 0
-    desaturate: 0
-  chromaticAberration:
-    enabled: 0
-    color: {r: 0, g: 1, b: 0, a: 1}
-    amount: 0
-  m_Shader: {fileID: 4800000, guid: 136ab50fe2b9ad64d9c22adc3668abb7, type: 3}
---- !u!114 &1474920065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1474920057}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a338d679868f45439ea43c7ae035e36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  settings:
-    visualizeFocus: 0
-    tweakMode: 0
-    filteringQuality: 2
-    apertureShape: 0
-    apertureOrientation: 0
-  focus:
-    transform: {fileID: 0}
-    focusPlane: 64.8
-    range: 0.1000061
-    nearPlane: 64.75
-    nearFalloff: 15
-    farPlane: 64.850006
-    farFalloff: 50
-    nearBlurRadius: 9.2
-    farBlurRadius: 40
-  bokehTexture:
-    texture: {fileID: 0}
-    scale: 1
-    intensity: 50
-    threshold: 2
-    spawnHeuristic: 0.15
-  m_FilmicDepthOfFieldShader: {fileID: 4800000, guid: bff0e5458fb914f5c9985ba4f09171d2,
-    type: 3}
-  m_MedianFilterShader: {fileID: 4800000, guid: a058b22d4123add4b807e832604e5e7b,
-    type: 3}
-  m_TextureBokehShader: {fileID: 4800000, guid: c961b8ed1f00f924d804ada5143bd0e8,
-    type: 3}
 --- !u!1 &1501876705
 GameObject:
   m_ObjectHideFlags: 0

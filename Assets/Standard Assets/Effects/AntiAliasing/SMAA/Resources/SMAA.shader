@@ -15,13 +15,13 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
         #pragma exclude_renderers flash
 		#include "UnityCG.cginc"
 
-        sampler2D _MainTex;
-        sampler2D _BlendTex;
-        sampler2D _AreaTex;
-        sampler2D _SearchTex;
-        sampler2D _AccumulationTex;
-
-        sampler2D _CameraDepthTexture;
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_MainTex);
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_BlendTex);
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_AreaTex);
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_SearchTex);
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_AccumulationTex);
+        UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+        
 
         float4 _MainTex_TexelSize;
 
@@ -70,6 +70,7 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
         {
             float4 pos : POSITION;
             float2 uv : TEXCOORD0;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
         };
 
         struct fInput_edge
@@ -77,11 +78,18 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
             float4 pos : SV_POSITION;
             float2 uv : TEXCOORD0;
             float4 offset[3] : TEXCOORD1;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+		    UNITY_VERTEX_OUTPUT_STEREO
         };
 
         fInput_edge vert_edge(vInput i)
         {
             fInput_edge o;
+
+            UNITY_SETUP_INSTANCE_ID(i);
+		    UNITY_TRANSFER_INSTANCE_ID(i, o);
+		    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
             o.pos = UnityObjectToClipPos(i.pos);
 			o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
 
@@ -265,11 +273,16 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                     float2 uv : TEXCOORD0;
                     float2 pixcoord : TEXCOORD1;
                     float4 offset[3] : TEXCOORD2;
+                    UNITY_VERTEX_INPUT_INSTANCE_ID
+                    UNITY_VERTEX_OUTPUT_STEREO
                 };
 
                 fInput vert(vInput i)
                 {
                     fInput o;
+                    UNITY_SETUP_INSTANCE_ID(i);
+                    UNITY_TRANSFER_INSTANCE_ID(i, o);
+                    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                     o.pos = UnityObjectToClipPos(i.pos);
 					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     o.pixcoord = o.uv * SMAA_RT_METRICS.zw;
@@ -320,11 +333,16 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                     float4 pos : SV_POSITION;
                     float2 uv : TEXCOORD0;
                     float4 offset : TEXCOORD1;
+                    UNITY_VERTEX_INPUT_INSTANCE_ID
+                    UNITY_VERTEX_OUTPUT_STEREO
                 };
 
                 fInput vert(vInput i)
                 {
                     fInput o;
+                    UNITY_SETUP_INSTANCE_ID(i);
+                    UNITY_TRANSFER_INSTANCE_ID(i, o);
+                    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                     o.pos = UnityObjectToClipPos(i.pos);
 					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     o.offset = mad(SMAA_RT_METRICS.xyxy, float4(1.0, 0.0, 0.0, 1.0), o.uv.xyxy);
@@ -363,11 +381,16 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
                 {
                     float4 pos : SV_POSITION;
                     float2 uv : TEXCOORD0;
+                    UNITY_VERTEX_INPUT_INSTANCE_ID
+		            UNITY_VERTEX_OUTPUT_STEREO
                 };
 
                 fInput vert(vInput i)
                 {
                     fInput o;
+                    UNITY_SETUP_INSTANCE_ID(i);
+                    UNITY_TRANSFER_INSTANCE_ID(i, o);
+                    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
                     o.pos = UnityObjectToClipPos(i.pos);
 					o.uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return o;
