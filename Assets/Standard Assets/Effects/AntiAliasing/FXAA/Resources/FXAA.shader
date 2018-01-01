@@ -1,5 +1,7 @@
 // Upgrade NOTE: replaced 'UNITY_INSTANCE_ID' with 'UNITY_VERTEX_INPUT_INSTANCE_ID'
 
+// Upgrade NOTE: replaced 'UNITY_INSTANCE_ID' with 'UNITY_VERTEX_INPUT_INSTANCE_ID'
+
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "Hidden/Fast Approximate Anti-aliasing"
@@ -36,33 +38,40 @@ Shader "Hidden/Fast Approximate Anti-aliasing"
         #include "FXAA3.cginc"
 
         float4 _MainTex_TexelSize;
-
         float3 _QualitySettings;
         float4 _ConsoleSettings;
 		half4 _MainTex_ST;
+
+        UNITY_DECLARE_SCREENSPACE_TEXTURE(_MainTex);
 
         struct Input
         {
             float4 position : POSITION;
             float2 uv : TEXCOORD0;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
         };
 
         struct Varying
         {
             float4 position : SV_POSITION;
             float2 uv : TEXCOORD0;
+            UNITY_VERTEX_INPUT_INSTANCE_ID
+		    UNITY_VERTEX_OUTPUT_STEREO
         };
 
         Varying vertex(Input input)
         {
             Varying output;
+
+            UNITY_SETUP_INSTANCE_ID(input);
+		    UNITY_TRANSFER_INSTANCE_ID(input, output);
+		    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
             output.position = UnityObjectToClipPos(input.position);
 			output.uv = UnityStereoScreenSpaceUVAdjust(input.uv, _MainTex_ST);
 
             return output;
         }
-
-        sampler2D _MainTex;
 
         float calculateLuma(float4 color)
         {
@@ -71,6 +80,7 @@ Shader "Hidden/Fast Approximate Anti-aliasing"
 
         fixed4 fragment(Varying input) : SV_Target
         {
+            UNITY_SETUP_INSTANCE_ID(input);
             const float4 consoleUV = input.uv.xyxy + .5 * float4(-_MainTex_TexelSize.xy, _MainTex_TexelSize.xy);
             const float4 consoleSubpixelFrame = _ConsoleSettings.x * float4(-1., -1., 1., 1.) *
                 _MainTex_TexelSize.xyxy;
