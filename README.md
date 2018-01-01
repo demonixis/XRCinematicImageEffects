@@ -6,12 +6,12 @@ This is an updated fork of the [Unity's Cinematic Image Effects](https://bitbuck
 # Compatibility
 | Effect | Note |Single Pass Stereo | Single Pass Instanced |
 |--------|------|-------------------|-----------------------|
-| FXAA | Ok | Yes | No |
+| FXAA | Ok | Yes | Wip |
 | SMAA | Temporal doesn't work | Yes | No |
 | Distortion | The center is not good | Mostly | No |
 | Vignette | Ok | Ok | No |
 | Chromatic Aberration | Ok | Yes | No |
-| Height Fog | Ok | Yes | No |
+| Height Fog | Ok | Yes | Wip |
 | Depth Of Field | WIP | Mostly | No |
 
 ## About the Post Process Stack V2

@@ -54,9 +54,9 @@ Shader "Hidden/Subpixel Morphological Anti-aliasing"
         #define SMAASampleLevelZero(tex, coord) tex2Dlod(tex, float4(coord, 0.0, 0.0))
         #define SMAASampleLevelZeroPoint(tex, coord) tex2Dlod(tex, float4(coord, 0.0, 0.0))
         #define SMAASampleLevelZeroOffset(tex, coord, offset) tex2Dlod(tex, float4(coord + offset * SMAA_RT_METRICS.xy, 0.0, 0.0))
-        #define SMAASample(tex, coord) tex2D(tex, coord)
-        #define SMAASamplePoint(tex, coord) tex2D(tex, coord)
-        #define SMAASampleOffset(tex, coord, offset) tex2D(tex, coord + offset * SMAA_RT_METRICS.xy)
+        #define SMAASample(tex, coord) UNITY_SAMPLE_SCREENSPACE_TEXTURE(tex, coord)
+        #define SMAASamplePoint(tex, coord) UNITY_SAMPLE_SCREENSPACE_TEXTURE(tex, coord)
+        #define SMAASampleOffset(tex, coord, offset) UNITY_SAMPLE_SCREENSPACE_TEXTURE(tex, coord + offset * SMAA_RT_METRICS.xy)
 
         #define SMAA_FLATTEN UNITY_FLATTEN
         #define SMAA_BRANCH UNITY_BRANCH

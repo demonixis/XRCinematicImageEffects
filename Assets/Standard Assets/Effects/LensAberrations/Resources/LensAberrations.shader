@@ -17,7 +17,8 @@ Shader "Hidden/LensAberrations"
             #include "UnityCG.cginc"
             #pragma target 3.0
 
-            sampler2D _MainTex;
+            UNITY_DECLARE_SCREENSPACE_TEXTURE(_MainTex);
+
             float4 _MainTex_TexelSize;
 			half4 _MainTex_ST;
             half4 _ChromaticAberration;
@@ -26,8 +27,8 @@ Shader "Hidden/LensAberrations"
             {
                 half2 coords = 2.0 * uv - 1.0;
                 half2 cd = coords * dot(coords, coords);
-                half4 color = tex2D(_MainTex, uv);
-                half3 fringe = tex2D(_MainTex, uv - cd * _ChromaticAberration.a).rgb;
+                half4 color = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, uv);
+                half3 fringe = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, uv - cd * _ChromaticAberration.a).rgb;
                 color.rgb = lerp(color.rgb, fringe, _ChromaticAberration.rgb);
                 return color;
             }
@@ -62,7 +63,7 @@ Shader "Hidden/LensAberrations"
             half2 _VignetteCenter;
             half _VignetteBlur;
             half _VignetteDesat;
-            sampler2D _BlurTex;
+            UNITY_DECLARE_SCREENSPACE_TEXTURE(_BlurTex);
 
             half4 vignette(half4 color, half2 uv)
             {
@@ -90,7 +91,7 @@ Shader "Hidden/LensAberrations"
                 #if VIGNETTE_BLUR
 
                     half2 coords = 2.0 * uv - 1.0;
-                    half3 blur = tex2D(_BlurTex, uv).rgb;
+                    half3 blur = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_BlurTex, uv).rgb;
                     color.rgb = lerp(color.rgb, blur, saturate(_VignetteBlur * dot(coords, coords)));
 
                 #endif
@@ -127,11 +128,18 @@ Shader "Hidden/LensAberrations"
                     half2 uv : TEXCOORD0;
                     half4 uv1 : TEXCOORD1;
                     half4 uv2 : TEXCOORD2;
+                    UNITY_VERTEX_INPUT_INSTANCE_ID
+		            UNITY_VERTEX_OUTPUT_STEREO
                 };
 
                 v2f vert_blur_prepass(appdata_img v)
                 {
                     v2f o;
+
+                    UNITY_SETUP_INSTANCE_ID(v);
+                    UNITY_TRANSFER_INSTANCE_ID(v, o);
+                    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
                     o.pos = UnityObjectToClipPos(v.vertex);
 					o.uv = UnityStereoScreenSpaceUVAdjust(v.texcoord.xy, _MainTex_ST);
 
@@ -156,12 +164,13 @@ Shader "Hidden/LensAberrations"
                     #if CHROMATIC_ABERRATION
                     return chromaticAberration(uv);
                     #else
-                    return tex2D(_MainTex, uv);
+                    return UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, uv);
                     #endif
                 }
 
                 half4 frag_blur_prepass(v2f i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
                     half4 c = fetch(i.uv) * 0.2270270270;
                     c += fetch(i.uv1.xy) * 0.3162162162;
                     c += fetch(i.uv1.zw) * 0.3162162162;
@@ -181,6 +190,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return chromaticAberration(uv);
                 }
@@ -197,9 +207,10 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
                     half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 dUV = distort(uv);
-                    return tex2D(_MainTex, dUV);
+                    return UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, dUV);
                 }
             ENDCG
         }
@@ -216,8 +227,9 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
-                    half4 color = tex2D(_MainTex, uv);
+                    half4 color = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, uv);
                     return vignette(color, uv);
                 }
             ENDCG
@@ -233,6 +245,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 dUV = distort(uv);
                     return chromaticAberration(dUV);
@@ -252,6 +265,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     return vignette(chromaticAberration(uv), uv);
                 }
@@ -271,9 +285,10 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 dUV = distort(uv);
-                    return vignette(tex2D(_MainTex, dUV), uv);
+                    return vignette(UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, dUV), uv);
                 }
             ENDCG
         }
@@ -291,6 +306,7 @@ Shader "Hidden/LensAberrations"
 
                 half4 frag(v2f_img i) : SV_Target
                 {
+                    UNITY_SETUP_INSTANCE_ID(i);
 					half2 uv = UnityStereoScreenSpaceUVAdjust(i.uv, _MainTex_ST);
                     half2 dUV = distort(uv);
                     half4 chroma = chromaticAberration(dUV);

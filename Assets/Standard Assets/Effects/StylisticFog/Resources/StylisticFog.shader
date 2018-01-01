@@ -20,11 +20,10 @@ Shader "Hidden/Image Effects/StylisticFog"
 
 	half4 _MainTex_TexelSize;
 
-	sampler2D _MainTex;
-	sampler2D _CameraDepthTexture;
-
-	sampler2D _FogColorTexture0;
-	sampler2D _FogColorTexture1;
+	UNITY_DECLARE_SCREENSPACE_TEXTURE(_MainTex);
+	UNITY_DECLARE_SCREENSPACE_TEXTURE(_FogColorTexture0);
+	UNITY_DECLARE_SCREENSPACE_TEXTURE(_FogColorTexture1);
+	UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
 	float4x4 _InverseViewMatrix;
 
@@ -40,6 +39,8 @@ Shader "Hidden/Image Effects/StylisticFog"
 		float4 pos : SV_POSITION;
 		float2 uv0 : TEXCOORD0;
 		float2 uv1 : TEXCOORD1;
+		UNITY_VERTEX_INPUT_INSTANCE_ID
+		UNITY_VERTEX_OUTPUT_STEREO
 	};
 
 	v2f_multitex vert_img_fog(appdata_img v)
@@ -48,6 +49,11 @@ Shader "Hidden/Image Effects/StylisticFog"
 		float vflip = sign(_MainTex_TexelSize.y);
 
 		v2f_multitex o;
+
+		UNITY_SETUP_INSTANCE_ID(v);
+		UNITY_TRANSFER_INSTANCE_ID(v, o);
+		UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
 		o.pos = UnityObjectToClipPos(v.vertex);
 		float2 uv = UnityStereoScreenSpaceUVAdjust(v.texcoord, _MainTex_ST);
 		o.uv0 = uv.xy;
@@ -84,7 +90,7 @@ Shader "Hidden/Image Effects/StylisticFog"
 
 	inline half4 GetColorFromTexture(sampler2D source, float fogAmount)
 	{
-		half4 textureColor = tex2D(source, float2(fogAmount, 0));
+		half4 textureColor = UNITY_SAMPLE_SCREENSPACE_TEXTURE(source, float2(fogAmount, 0));
 		#if defined(UNITY_COLORSPACE_GAMMA) && defined(FOG_HANDLE_GAMMA_CORRECTION)
 			textureColor.rgb = GammaToLinearSpace(textureColor.rgb);
 		#endif
@@ -95,7 +101,7 @@ Shader "Hidden/Image Effects/StylisticFog"
 	inline half4 BlendFogToScene(float2 uv, half4 fogColor, float fogAmount)
 	{
 		// clamp the scene color to at most 1. to avoid HDR rendering to change lumiance in final image.
-		half4 sceneColor = min(1., tex2D(_MainTex, uv));
+		half4 sceneColor = min(1., UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, uv));
 		#if defined(UNITY_COLORSPACE_GAMMA) && defined(FOG_HANDLE_GAMMA_CORRECTION)
 			sceneColor.rgb = GammaToLinearSpace(sceneColor.rgb);
 		#endif
@@ -111,6 +117,7 @@ Shader "Hidden/Image Effects/StylisticFog"
 
 	half4 fragment_distance(v2f_multitex i) : SV_Target
 	{
+		UNITY_SETUP_INSTANCE_ID(i);
 		float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv1);
 
 		float4 wpos = DepthToWorld(depth, i.uv1, _InverseViewMatrix);
